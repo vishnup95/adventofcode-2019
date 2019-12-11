@@ -7,15 +7,16 @@ performOpCodeOperation(opCodes, firstInput);
 function performOpCodeOperation(codes, input) {
   let index = 0;
 
-  while (index < codes.length) {
+  while (index < codes.length && codes[index] != 99) {
     // Now we need to get the opCode.
-    let opCodeString = codes[index].toString();
-    let opCodeFull = opCodeString.padStart(4, "0");
-    let opCode = opCodeFull[2] + opCodeFull[3];
-    let value1 = opCodeFull[1] == 0 ? codes[codes[index + 1]] : codes[index + 1];
-    let value2 = opCodeFull[0] == 0 ? codes[codes[index + 2]] : codes[index + 2];
-    console.log(codes);
-    switch (opCode) {
+    console.log(index);
+    let stringOpCode = codes[index].toString();
+    let paddedOpCode = stringOpCode.padStart(4, "0");
+    let finalOpCode = paddedOpCode[2].concat(paddedOpCode[3]);
+    let value1 = paddedOpCode[1] === "0" ? codes[codes[index + 1]] : codes[index + 1];
+    let value2 = paddedOpCode[0] === "0" ? codes[codes[index + 2]] : codes[index + 2];
+
+    switch (finalOpCode) {
       case "01":
         codes[codes[index + 3]] = value1 + value2;
         index += 4;
@@ -27,24 +28,22 @@ function performOpCodeOperation(codes, input) {
         break;
 
       case "03":
-        if (opCodeFull[1] == 1) {
-          // position mode and immeadiate check for cases like 103
-          codes[index + 1] = input;
-        } else {
+        if (paddedOpCode[1] === "0") {
           codes[codes[index + 1]] = input;
+        } else {
+          codes[index + 1] = input;
         }
-        index = index + 2;
+        index += 2;
         break;
 
       case "04":
-        console.log("Value : ", codes[index + 1]);
-        index = index + 2;
+        console.log("Output Value: ", value1);
+        index += 2;
         break;
 
       default:
-          index++;
         break;
     }
-    // index++;
+   // index++;    
   }
 }
